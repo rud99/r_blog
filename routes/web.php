@@ -11,9 +11,6 @@
 |
 */
 
-//Route::get('/', function () {
-//    return view('main');
-//});
 Route::get('/login', 'LoginController@login')->name('login');
 Route::post('/authenticate', 'LoginController@authenticate');
 
@@ -24,6 +21,9 @@ Route::post('/registrate', 'RegisterController@registrate');
 Route::get('/', 'PostsController@index')->name('home');
 Route::get('/post/{id}', 'PostsController@showPost');
 Route::get('/home', 'PostsController@index');
+
+Route::get('/tagposts/{id}', 'PostsController@showPostWidthTags');
+
 
 Route::middleware('auth')->group(function() {
     Route::get('/logout', 'LoginController@logout');
@@ -49,11 +49,3 @@ Route::middleware('auth')->group(function() {
     Route::get('/deletetag/{id}', 'TagController@deleteTag');
 
 });
-
-
-//Route::get('/', 'PostsController@index');
-//Auth::routes();
-
-//Route::get('/register', function () {
-//    return view('auth/register');
-//});

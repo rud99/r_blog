@@ -90,4 +90,12 @@ class PostService
     {
         PostTag::where('post_id', $postId)->delete();
     }
+
+    public function updateTags($postId, $tags)
+    {
+        PostTag::where('post_id', $postId)->delete();
+        $this->storeTags($postId, $tags);
+
+        return true;
+    }
 }

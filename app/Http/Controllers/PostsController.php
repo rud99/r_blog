@@ -41,16 +41,17 @@ class PostsController extends Controller
 
     public function editPost($id)
     {
+        $post = $this->post->getOne($id);
         if ($this->post->isPostAuthor($post->user_id)) {
-            $post = $this->post->getOne($id);
-            return view('editpost', ['post' => $post]);
+            $tags = $this->tag->all();
+
+            return view('editpost', ['post' => $post, 'tags' => $tags]);
         } else
                 return abort(404);
     }
 
     public function storePost(Request $request)
     {
-//        dd($request->all());
         $this->validate($request, [
             'title' => 'required|min:5',
             'image' => 'image',
@@ -69,11 +70,13 @@ class PostsController extends Controller
 
     public function updatePost(Request $request)
     {
+
         $id = $request->input('id');
         $user_id = $request->input('user_id');
         $title = $request->input('title');
         $image = $request->file('image');
         $text = $request->input('text');
+        $tags = $request->input('tags');
         $data = [];
         if ($this->post->isPostAuthor($user_id)) {
             if (!is_null($image)) {
@@ -89,6 +92,7 @@ class PostsController extends Controller
             ];
 
             $this->post->update($id, $data);
+            $this->post->updateTags($id, $tags);
 
             return redirect('/');
         } else return abort(404);
@@ -109,8 +113,10 @@ class PostsController extends Controller
 
     }
 
-    public function storePostTags($postId, $tags)
+    public function showPostWidthTags($tagId)
     {
+        $tag = $this->tag->getOne($tagId);
 
+        return view('tagposts', ['tag' => $tag]);
     }
 }

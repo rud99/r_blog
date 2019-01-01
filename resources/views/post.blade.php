@@ -22,7 +22,7 @@
                     <div>
                         Tags:
                         @foreach($post->tags as $tag)
-                            <b>{{$tag->tag}}</b>
+                            <a href="/tagposts/{{$tag->id}}"><b>{{$tag->tag}}</b>
                         @endforeach
                     </div>
                     <div class="detail-view-button">

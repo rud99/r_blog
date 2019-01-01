@@ -27,6 +27,20 @@
                         <label>Post text</label>
                         <textarea type="text" name="text" class="form-control">{{$post->text}}</textarea>
                     </div>
+                    <div class="form-group">
+                        <h4>Tags</h4>
+                        @foreach($tags as $tag)
+                            <label>
+                                <input type="checkbox" name="tags[{{$tag->id}}]"
+                                @foreach($post->tags as $p_tag)
+                                    @if ($p_tag->id == $tag->id)
+                                        checked
+                                    @endif
+                                @endforeach
+                                > {{$tag->tag}}
+                            </label><br>
+                        @endforeach
+                    </div>
                     <button type="submit" class="btn btn-success my_sub_btn">Update</button>
                 </form>
         </div>
