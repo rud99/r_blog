@@ -98,4 +98,54 @@ class PostService
 
         return true;
     }
+
+
+    public function storePostWidthTags($title, $filename, $text, $tags)
+    {
+        $postId = $this->add($title, $filename, $text);
+        $this->storeTags($postId, $tags);
+
+        return true;
+    }
+
+    public function updatePostWidthTagsAndImage($id, $title, $text, $image, $tags)
+    {
+        $post = $this->getOne($id);
+        if ($this->isPostAuthor($post->user_id)) {
+            $data = [];
+            // картинку изменили, выбрали новую в форме
+            if (!is_null($image)) {
+                $filename = $image->store('uploads');
+                $this->deleteImage($post->image);
+                $data = ['image' => $filename];
+            }
+            $data += [
+                'title' => $title,
+                'text' => $text
+            ];
+
+            $this->update($id, $data);
+            if (!is_null($tags)) $this->updateTags($id, $tags);
+            $res = true;
+        } else $res = false;
+
+        return $res;
+    }
+
+
+    public function fullDeletePost($id)
+    {
+        $post = $this->getOne($id);
+        $postUserId = $post->user_id;
+        $image = $post->image;
+        if ($this->isPostAuthor($postUserId)) {
+            $this->delete($id);
+            $this->deleteImage($image);
+            $this->deletePostComments($id);
+            $this->deletePostTags($id);
+            $res = true;
+        } else $res = false;
+
+        return $res;
+    }
 }

@@ -47,5 +47,4 @@ Route::middleware('auth')->group(function() {
     Route::post('/storetag', 'TagController@storeTag');
     Route::post('/updatetag', 'TagController@updateTag');
     Route::get('/deletetag/{id}', 'TagController@deleteTag');
-
 });

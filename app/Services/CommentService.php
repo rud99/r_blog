@@ -62,7 +62,14 @@ class CommentService
 
     public function delete($id)
     {
-        Comment::destroy([$id]);
+       $comment = $this->getOne($id);
+       $commentUserId = $comment->user_id;
+       if ($this->isCommentAuthor($commentUserId)) {
+           Comment::destroy([$id]);
+           $res = true;
+       } else $res = false;
+
+       return $res;
     }
 
     public function update($id, $data)

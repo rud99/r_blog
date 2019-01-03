@@ -17,9 +17,7 @@ class CommentController extends Controller
 
     public function index()
     {
-//        $comments = $this->comment->all();
         $comments = $this->comment->getUsersComments();
-//        $comments = Comment::orderBy('updated_at', 'desc')->paginate(3);
 
         return view('comments', ['comments' => $comments]);
     }
@@ -40,12 +38,9 @@ class CommentController extends Controller
 
     public function deleteComment($id)
     {
-        $comment = $this->comment->getOne($id);
-        $commentUserId = $comment->user_id;
-        if ($this->comment->isCommentAuthor($commentUserId)) {
-            $this->comment->delete($id);
-            return redirect('/comments');
-        } else return abort(404);
+       $res = $this->comment->delete($id);
+       if ($res) return redirect('/comments');
+        else return abort(404);
     }
 
     public function editComment($id)

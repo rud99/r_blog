@@ -54,63 +54,35 @@ class PostsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|min:5',
-            'image' => 'image',
+            'image' => 'required|image',
             'text' => 'required|min:5'
         ]);
         $title = $request->input('title');
         $filename = $request->file('image');
         $text = $request->input('text');
         $tags = $request->input('tags');
-        $postId = $this->post->add($title, $filename, $text);
-
-        $this->post->storeTags($postId, $tags);
+        $this->post->storePostWidthTags($title, $filename, $text, $tags);
 
         return redirect('/');
     }
 
     public function updatePost(Request $request)
     {
-
         $id = $request->input('id');
-        $user_id = $request->input('user_id');
         $title = $request->input('title');
         $image = $request->file('image');
         $text = $request->input('text');
         $tags = $request->input('tags');
-        $data = [];
-        if ($this->post->isPostAuthor($user_id)) {
-            if (!is_null($image)) {
-                $filename = $image->store('uploads');
-                $post = $this->post->getOne($id);
-                $this->post->deleteImage($post->image);
-                $data = ['image' => $filename];
-            }
-
-            $data += [
-                'title' => $title,
-                'text' => $text
-            ];
-
-            $this->post->update($id, $data);
-            $this->post->updateTags($id, $tags);
-
-            return redirect('/');
-        } else return abort(404);
+        $res = $this->post->updatePostWidthTagsAndImage($id, $title, $text, $image, $tags);
+        if ($res) return redirect('/');
+            else return abort(404);
     }
 
     public function deletePost($id)
     {
-        $post = $this->post->getOne($id);
-        $postUserId = $post->user_id;
-        $image = $post->image;
-        if ($this->post->isPostAuthor($postUserId)) {
-            $this->post->delete($id);
-            $this->post->deleteImage($image);
-            $this->post->deletePostComments($id);
-            $this->post->deletePostTags($id);
-            return redirect('/');
-        } else return abort(404);
-
+        $res = $this->post->fullDeletePost($id);
+        if ($res) return redirect('/');
+            else return abort(404);
     }
 
     public function showPostWidthTags($tagId)

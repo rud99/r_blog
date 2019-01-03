@@ -13,7 +13,6 @@
                 <form action="/updatepost" method="post" enctype="multipart/form-data">
                     {{csrf_field()}}
                     <input type="hidden" name="id" value="{{$post->id}}">
-                    <input type="hidden" name="user_id" value="{{$post->user_id}}">
                     <div class="form-group">
                         <label>Post title</label>
                         <input type="text" name="title" class="form-control" value="{{$post->title}}">
