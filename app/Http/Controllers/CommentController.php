@@ -22,7 +22,7 @@ class CommentController extends Controller
         return view('comments', ['comments' => $comments]);
     }
 
-    public function storeComment(Request $request)
+    public function store(Request $request)
     {
         $this->validate($request, [
             'post_id' => 'required',

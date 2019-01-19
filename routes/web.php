@@ -28,15 +28,15 @@ Route::get('/tagposts/{id}', 'PostsController@showPostWidthTags');
 Route::middleware('auth')->group(function() {
     Route::get('/logout', 'LoginController@logout');
 
-    Route::get('/addpost', 'PostsController@addPost')->name('addpost');
+    Route::get('/addpost', 'PostsController@add')->name('addpost');
     Route::get('/editpost/{id}', 'PostsController@editPost');
-    Route::post('/storepost', 'PostsController@storePost');
-    Route::post('/updatepost', 'PostsController@updatePost');
-    Route::get('/deletepost/{id}', 'PostsController@deletePost');
+    Route::post('/storepost', 'PostsController@store');
+    Route::post('/updatepost', 'PostsController@update');
+    Route::get('/deletepost/{id}', 'PostsController@delete');
 
     Route::get('/comments', 'CommentController@index')->name('comments');
     Route::get('/addcomment', 'CommentController@addPost');
-    Route::post('/storecomment', 'CommentController@storeComment');
+    Route::post('/storecomment', 'CommentController@store');
 
     Route::get('/deletecomment/{id}', 'CommentController@deleteComment');
     Route::get('/editcomment/{id}', 'CommentController@editComment');

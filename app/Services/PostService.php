@@ -10,7 +10,6 @@ namespace App\Services;
 
 use App\Comment;
 use App\Post;
-use App\PostTag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -77,38 +76,48 @@ class PostService
         Comment::where('post_id', $postId)->delete();
     }
 
-    public function storeTags($postId, $tags)
+    /**
+     * Удаляем теги, привязанные к посту поста
+     * @param $post
+     */
+    public function deletePostTags($post)
     {
-        foreach ($tags as $key => $value) {
-            PostTag::create(['post_id' => $postId, 'tag_id' => $key]);
-        }
+        $tags = $post->tags->pluck('id');
+        $post->tags()->detach($tags);
 
         return true;
-    }
-
-    public function deletePostTags($postId)
-    {
-        PostTag::where('post_id', $postId)->delete();
     }
 
     public function updateTags($postId, $tags)
     {
         PostTag::where('post_id', $postId)->delete();
-        $this->storeTags($postId, $tags);
+        if ($tags) $this->storeTags($postId, $tags);
 
         return true;
     }
 
-
-    public function storePostWidthTags($title, $filename, $text, $tags)
+    /**
+     * Сохраняем пост
+     * @param $title
+     * @param $filename
+     * @param $text
+     * @param $tags
+     * @return bool
+     */
+    public function store($title, $filename, $text, $tags)
     {
         $postId = $this->add($title, $filename, $text);
-        $this->storeTags($postId, $tags);
+        $post = Post::find($postId);
+        if ($tags) {
+            $tags = array_keys($tags);
+//            $post->tags()->attach($tags, ['created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+            $post->tags()->attach($tags);
+        }
 
         return true;
     }
 
-    public function updatePostWidthTagsAndImage($id, $title, $text, $image, $tags)
+    public function updatePost($id, $title, $text, $image, $tags)
     {
         $post = $this->getOne($id);
         if ($this->isPostAuthor($post->user_id)) {
@@ -123,9 +132,9 @@ class PostService
                 'title' => $title,
                 'text' => $text
             ];
-
             $this->update($id, $data);
-            if (!is_null($tags)) $this->updateTags($id, $tags);
+            if ($tags) $tags = array_keys($tags);
+            $post->tags()->sync($tags);
             $res = true;
         } else $res = false;
 
@@ -133,16 +142,19 @@ class PostService
     }
 
 
-    public function fullDeletePost($id)
+    public function deletePost($id)
     {
         $post = $this->getOne($id);
+//        dd($post);
         $postUserId = $post->user_id;
         $image = $post->image;
         if ($this->isPostAuthor($postUserId)) {
             $this->delete($id);
             $this->deleteImage($image);
             $this->deletePostComments($id);
-            $this->deletePostTags($id);
+            $this->deletePostTags($post);
+//            $tags = $post->tags->pluck('id');
+//            $post->tags()->detach($tags);
             $res = true;
         } else $res = false;
 

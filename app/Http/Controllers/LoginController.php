@@ -20,7 +20,7 @@ class LoginController extends Controller
         if (Auth::attempt(['email' => $email, 'password' => $password], $remember)) {
             // Аутентификация успешна...
             return redirect()->intended('/');
-        }
+        } else return redirect(404);
     }
 
     public function logout()

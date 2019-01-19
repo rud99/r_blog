@@ -19,7 +19,6 @@ class TagController extends Controller
     {
         if (Auth::user()->is_admin) {
             $tags = $this->tag->all();
-
             return view('tags', ['tags' => $tags]);
         } else return abort(404);
     }

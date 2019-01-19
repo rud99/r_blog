@@ -22,6 +22,16 @@ class TagService
         return $tags;
     }
 
+    public function allDontPaginate()
+    {
+//        $tags = Tag::orderBy('tag', 'asc')->get()->map(function ($tag) {
+//            return $tag->only(['id']);
+//        });
+        $tags = Tag::orderBy('tag', 'asc')->get()->pluck(['id'])->all();
+
+        return $tags;
+    }
+
     public function add($tag)
     {
         Tag::create(['tag'  => $tag]);

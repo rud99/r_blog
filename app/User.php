@@ -26,6 +26,12 @@ class User extends Authenticatable
             }
     }
 
+    public function setAdmin()
+    {
+        $this->is_admin = 1;
+        $this->save();
+    }
+
     private function setPassword($password)
     {
         $this->password = bcrypt($password);

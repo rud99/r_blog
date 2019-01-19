@@ -26,10 +26,10 @@ class Post extends Model
 
     public function tags()
     {
-        return $this->belongsToMany('App\Tag', 'posts_tags');
+        return $this->belongsToMany('App\Tag', 'posts_tags')->withTimestamps();
     }
 
-    public function getPostPreview($maxLength)
+    public function getPostPreview($maxLength = 300)
     {
         if (strlen($this->text) > $maxLength) return str_limit($this->text, $maxLength);
             else return $this->text;

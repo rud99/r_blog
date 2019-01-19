@@ -6,6 +6,8 @@ use App\Services\TagService;
 use Illuminate\Http\Request;
 use App\Services\PostService;
 use Illuminate\Support\Facades\Auth;
+use Mockery\Exception;
+use App;
 
 class PostsController extends Controller
 {
@@ -20,6 +22,7 @@ class PostsController extends Controller
 
     public function index()
     {
+//        factory(App\Post::class, 10)->create();
         $posts = $this->post->all();
 
         return view('main', ['posts' => $posts]);
@@ -33,7 +36,7 @@ class PostsController extends Controller
         return view('post', ['post' => $post]);
     }
 
-    public function addPost()
+    public function add()
     {
         $tags = $this->tag->all();
         return view('addpost', ['tags' => $tags]);
@@ -50,7 +53,7 @@ class PostsController extends Controller
                 return abort(404);
     }
 
-    public function storePost(Request $request)
+    public function store(Request $request)
     {
         $this->validate($request, [
             'title' => 'required|min:5',
@@ -61,26 +64,29 @@ class PostsController extends Controller
         $filename = $request->file('image');
         $text = $request->input('text');
         $tags = $request->input('tags');
-        $this->post->storePostWidthTags($title, $filename, $text, $tags);
+        $this->post->store($title, $filename, $text, $tags);
 
         return redirect('/');
     }
 
-    public function updatePost(Request $request)
+    public function update(Request $request)
     {
         $id = $request->input('id');
         $title = $request->input('title');
         $image = $request->file('image');
         $text = $request->input('text');
         $tags = $request->input('tags');
-        $res = $this->post->updatePostWidthTagsAndImage($id, $title, $text, $image, $tags);
-        if ($res) return redirect('/');
-            else return abort(404);
+        try {
+            $this->post->updatePost($id, $title, $text, $image, $tags);
+            return redirect('/');
+        } catch (Exception $exception) {
+            return abort(404);
+        }
     }
 
-    public function deletePost($id)
+    public function delete($id)
     {
-        $res = $this->post->fullDeletePost($id);
+        $res = $this->post->deletePost($id);
         if ($res) return redirect('/');
             else return abort(404);
     }
@@ -91,4 +97,6 @@ class PostsController extends Controller
 
         return view('tagposts', ['tag' => $tag]);
     }
+
+
 }
