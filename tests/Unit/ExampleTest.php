@@ -6,7 +6,6 @@ use App;
 use App\Services\CommentService;
 use App\Services\PostService;
 use App\Services\TagService;
-use App\User;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;

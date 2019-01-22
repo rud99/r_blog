@@ -20,8 +20,6 @@ Route::post('/registrate', 'RegisterController@registrate');
 
 Route::get('/', 'PostsController@index')->name('home');
 Route::get('/post/{id}', 'PostsController@showPost');
-Route::get('/home', 'PostsController@index');
-
 Route::get('/tagposts/{id}', 'PostsController@showPostWidthTags');
 
 

@@ -37,6 +37,16 @@ class MyUserTestTest extends TestCase
         $response->assertDontSee('Register');
     }
 
+    function testUserShowRegisterForm()
+    {
+        $response = $this->get('/register');
+        $response->assertSee('Name');
+        $response->assertSee('E-Mail Address');
+        $response->assertSee('Password');
+        $response->assertSee('Confirm Password');
+        $response->assertSee('Register');
+    }
+
     function testUserLogout()
     {
         $user = factory(App\User::class)->create();
