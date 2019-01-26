@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Comment;
 use App\Services\CommentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
@@ -30,7 +31,9 @@ class CommentController extends Controller
         ]);
         $postId  = $request->input('post_id');
         $comment = $request->input('comment');
-        $this->comment->add($postId, $comment);
+        $userId = Auth::id();
+
+        $this->comment->add($postId, $comment, $userId);
 
         return redirect('/post/'.$postId);
 
@@ -55,7 +58,7 @@ class CommentController extends Controller
     public function updateComment(Request $request)
     {
         $id = $request->input('id');
-        $newComment = $request->input('id');
+        $newComment = $request->input('comment');
         $comment = $this->comment->getOne($id);
         $commentUserId = $comment->user_id;
         if ($this->comment->isCommentAuthor($commentUserId)) {

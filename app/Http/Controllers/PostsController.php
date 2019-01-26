@@ -60,11 +60,12 @@ class PostsController extends Controller
             'image' => 'required|image',
             'text' => 'required|min:5'
         ]);
+        $userId = Auth::id();
         $title = $request->input('title');
         $filename = $request->file('image');
         $text = $request->input('text');
         $tags = $request->input('tags');
-        $this->post->store($title, $filename, $text, $tags);
+        $this->post->store($title, $filename, $text, $tags, $userId);
 
         return redirect('/');
     }

@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
+use Illuminate\Http\UploadedFile;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,9 +26,11 @@ $factory->define(App\User::class, function (Faker $faker) {
 
 
 $factory->define(App\Post::class, function (Faker $faker) {
+    $im = new UploadedFile('public/03.jpg', '03.jpg', 'image/jpg', filesize('public/03.jpg'), null, true);
+    $image = $im->store('uploads');
     return [
         'title' => $faker->sentence($nbWords = 6, $variableNbWords = true),
-        'image' => 'uploads/naFvD6GqaSxuA85dFHPILViq45StihxmVilgoXzd.jpeg',
+        'image' => $image,
         'text' => $faker->text,
         'user_id' => factory(App\User::class)->create()->id,
         'views' =>  rand(10, 1000)

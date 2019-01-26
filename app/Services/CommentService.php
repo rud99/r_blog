@@ -16,10 +16,8 @@ class CommentService
 {
     private $perPage = 6;
 
-    public function add($postId, $comment)
+    public function add($postId, $comment, $userId)
     {
-        $userId = Auth::id();
-
         Comment::create([
             'user_id'  => $userId,
             'post_id'  => $postId,

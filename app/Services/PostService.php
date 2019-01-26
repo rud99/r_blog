@@ -25,10 +25,9 @@ class PostService
         return $posts;
     }
 
-    public function add($title, $image, $text)
+    public function add($title, $image, $text, $userId)
     {
         $filename = $image->store('uploads');
-        $userId = Auth::id();
         $postId = Post::create([
             'title' => $title,
             'image' => $filename,
@@ -104,11 +103,11 @@ class PostService
      * @param $tags
      * @return bool
      */
-    public function store($title, $filename, $text, $tags)
+    public function store($title, $filename, $text, $tags, $userId)
     {
-        $postId = $this->add($title, $filename, $text);
-        $post = Post::find($postId);
+        $postId = $this->add($title, $filename, $text, $userId);
         if ($tags) {
+            $post = Post::find($postId);
             $tags = array_keys($tags);
 //            $post->tags()->attach($tags, ['created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
             $post->tags()->attach($tags);
