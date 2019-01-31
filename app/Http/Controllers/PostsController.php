@@ -77,8 +77,9 @@ class PostsController extends Controller
         $image = $request->file('image');
         $text = $request->input('text');
         $tags = $request->input('tags');
+        $userId = Auth::id();
         try {
-            $this->post->updatePost($id, $title, $text, $image, $tags);
+            $this->post->updatePost($id, $title, $text, $image, $tags, $userId);
             return redirect('/');
         } catch (Exception $exception) {
             return abort(404);
@@ -87,7 +88,8 @@ class PostsController extends Controller
 
     public function delete($id)
     {
-        $res = $this->post->deletePost($id);
+        $userId = Auth::id();
+        $res = $this->post->deletePost($id, $userId);
         if ($res) return redirect('/');
             else return abort(404);
     }

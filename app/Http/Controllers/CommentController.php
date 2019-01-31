@@ -41,8 +41,9 @@ class CommentController extends Controller
 
     public function deleteComment($id)
     {
-       $res = $this->comment->delete($id);
-       if ($res) return redirect('/comments');
+        $userId = Auth::id();
+        $res = $this->comment->delete($id, $userId);
+        if ($res) return redirect('/comments');
         else return abort(404);
     }
 

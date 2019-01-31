@@ -113,13 +113,14 @@ class PostService
             $post->tags()->attach($tags);
         }
 
-        return true;
+        return $postId;
     }
 
-    public function updatePost($id, $title, $text, $image, $tags)
+    public function updatePost($id, $title, $text, $image, $tags, $userId)
     {
         $post = $this->getOne($id);
-        if ($this->isPostAuthor($post->user_id)) {
+//        if ($this->isPostAuthor($post->user_id)) {
+            if ($post->user_id == $userId) {
             $data = [];
             // картинку изменили, выбрали новую в форме
             if (!is_null($image)) {
@@ -141,13 +142,14 @@ class PostService
     }
 
 
-    public function deletePost($id)
+    public function deletePost($id, $userId)
     {
         $post = $this->getOne($id);
 //        dd($post);
         $postUserId = $post->user_id;
         $image = $post->image;
-        if ($this->isPostAuthor($postUserId)) {
+//        if ($this->isPostAuthor($postUserId)) {
+        if ($post->user_id == $userId) {
             $this->delete($id);
             $this->deleteImage($image);
             $this->deletePostComments($id);

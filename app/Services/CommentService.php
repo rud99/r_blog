@@ -58,11 +58,11 @@ class CommentService
         return $res;
     }
 
-    public function delete($id)
+    public function delete($id, $userId)
     {
        $comment = $this->getOne($id);
        $commentUserId = $comment->user_id;
-       if ($this->isCommentAuthor($commentUserId)) {
+       if ($comment->user_id == $userId) {
            Comment::destroy([$id]);
            $res = true;
        } else $res = false;

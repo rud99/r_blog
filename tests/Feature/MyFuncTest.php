@@ -3,15 +3,13 @@
 namespace Tests\Unit;
 
 use App;
-use App\User;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Session;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MyFuncTest extends TestCase
 {
-//    use RefreshDatabase;
+    use RefreshDatabase;
 
     protected function getUploadedFileObject($fileName)
     {
@@ -66,7 +64,7 @@ class MyFuncTest extends TestCase
 
     // регистрация пользователя
     /** @test */
-/*    public function registerUser()
+    public function registerUser()
     {
         $data = [
             'email' => 'jphn@dmail.com',
@@ -77,7 +75,7 @@ class MyFuncTest extends TestCase
         $response = $this->post('/registrate', $data);
         $response->assertStatus(302);
         $response->assertRedirect('/');
-    }*/
+    }
 
     // открываем страницу логина
     /** @test */
@@ -391,58 +389,4 @@ class MyFuncTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirect('/tags');
     }
-
-    /*    public function testRegisterUser()
-    {
-        $data = [
-            'email' => 'jphn@dmail.com',
-            'name' => 'John Do',
-            'password' => 'password',
-            'password_confirmation' => 'password'
-        ];
-        User::register($data);
-
-        $this->assertDatabaseHas('users', [
-            'email' => 'jphn@dmail.com',
-            'name' => 'John Do'
-        ]);
-    }*/
-
-   /* function testUserLogin()
-    {
-        $user = factory(App\User::class)->create();
-        $response = $this->actingAs($user)->get('/');
-        $response->assertSee('User: <b>'.$user->name.'</b>');
-        $response->assertSee('Logout');
-        $response->assertDontSee('Login');
-        $response->assertDontSee('Register');
-    }
-
-    function testUserShowRegisterForm()
-    {
-        $response = $this->get('/register');
-        $response->assertSee('Name');
-        $response->assertSee('E-Mail Address');
-        $response->assertSee('Password');
-        $response->assertSee('Confirm Password');
-        $response->assertSee('Register');
-    }
-
-    function testUserLogout()
-    {
-        $user = factory(App\User::class)->create();
-        $response = $this->actingAs($user)->get('/logout');
-        $response->assertRedirect('/');
-        $response->assertDontSee('User:');
-    }
-
-    function testUserShowLoginForm()
-    {
-        $response = $this->get('/login');
-        $response->assertSee('Login');
-        $response->assertSee('E-Mail Address');
-        $response->assertSee('Password');
-        $response->assertDontSee('Logout');
-    }*/
-
 }
