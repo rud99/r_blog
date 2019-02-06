@@ -38,21 +38,7 @@ class ExampleTest extends TestCase
 
         return $tagNew;
     }
-    // логин пользователя
-    /** @test */
-    public function loginUser()
-    {
-        // нам нужен пользователь
-        $user = factory(App\User::class)->create();
-        $data = [
-            'email' => $user->email,
-            'password' => 'secret'
-        ];
-        $remember = 1;
-        Auth::attempt($data, $remember);
 
-        $this->assertAuthenticatedAs($user);
-    }
 
     // регистрация пользователя
     /** @test */
@@ -82,28 +68,16 @@ class ExampleTest extends TestCase
         $title = 'Test title';
         $file = $this->getUploadedFileObject('03.jpg');
         $text = 'Test text Test text Test text Test text';
-        // зачитываем все теги
-        factory(App\Tag::class, 10)->create();
-        $ts = new TagService();
-        $tagsArray = $ts->allDontPaginate();
-        $tags = $this->getRandTags($tagsArray);
-//        dd($tags);
+        $tags = null;
         $userId = $user->id;
 
         $ps = new PostService();
-        $postId = $ps->store($title, $file, $text, $tags, $userId);
+        $ps->store($title, $file, $text, $tags, $userId);
         $this->assertDatabaseHas('posts', [
             'title' => $title,
             'text' => $text,
             'user_id' => $userId
         ]);
-        // проверяем есть ли теги в связующей таблице
-        foreach (array_keys($tags) as $tag) {
-            $this->assertDatabaseHas('posts_tags', [
-                'post_id' => $postId,
-                'tag_id' => $tag
-            ]);
-        }
     }
 
     // редактир поста
@@ -116,12 +90,8 @@ class ExampleTest extends TestCase
         $title = 'Updated test title';
 //        $file = $this->getUploadedFileObject('03.jpg');
         $text = 'Updated UpdatedUpdatedUpdated Test text Test text Test text Test text';
-        // зачитываем все теги
-        factory(App\Tag::class, 10)->create();
-        $ts = new TagService();
-        $tagsArray = $ts->allDontPaginate();
-        $tags = $this->getRandTags($tagsArray);
         $file = null;
+        $tags = null;
         $ps = new PostService();
         $ps->updatePost($post->id, $title, $text, $file, $tags, $post->user_id);
         $this->assertDatabaseHas('posts', [
@@ -129,13 +99,6 @@ class ExampleTest extends TestCase
             'title' => $title,
             'text' => $text
         ]);
-        // проверяем есть ли теги в связующей таблице
-        foreach (array_keys($tags) as $tag) {
-            $this->assertDatabaseHas('posts_tags', [
-                'post_id' => $post->id,
-                'tag_id' => $tag
-            ]);
-        }
     }
 
     // удаление поста
@@ -202,6 +165,30 @@ class ExampleTest extends TestCase
         $cs->delete($comment->id, $comment->user_id);
         $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
     }
+
+    // привязка tag к посту
+    // возможно, что даже и не стоит тестировать эту функцию, тк функционал
+    // написан разработчиком, я про функцию attach. Т.к. я не придумываю её сам а всего-лишь использую уже готовую
+    /** @test */
+    public function tagAttach()
+    {
+        // нам нужен пост
+        $post = factory(App\Post::class)->create();
+        // генерим теги
+        factory(App\Tag::class, 10)->create();
+        $ts = new TagService();
+        $tagsArray = $ts->allDontPaginate();
+        $tags = array_keys($this->getRandTags($tagsArray));
+        $post->tags()->attach($tags);
+        // проверяем есть ли теги в связующей таблице
+        foreach ($tags as $tag) {
+            $this->assertDatabaseHas('posts_tags', [
+                'post_id' => $post->id,
+                'tag_id' => $tag
+            ]);
+        }
+    }
+
 
     // создание tag
 
